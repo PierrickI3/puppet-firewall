@@ -21,7 +21,7 @@
 class firewall {
 
   # Enable/Disable firewall profiles via hiera
-  $profiles = hiera_array('firewall::profiles', [])
+  $profiles = hiera('firewall::profiles', {})
   if (!empty($profiles))
   {
     notice(" Checking firewall profiles: ${profiles}")
@@ -33,7 +33,7 @@ class firewall {
   }
 
   # Enable/Disable firewall groups via hiera
-  $groups = hiera_array('firewall::groups', [])
+  $groups = hiera('firewall::groups', {})
   if (!empty($groups))
   {
     notice(" Checking firewall groups: ${groups}")
@@ -45,7 +45,7 @@ class firewall {
   }
 
   # Enable/Disable firewall rules via hiera
-  $rules = hiera_array('firewall::rules', [])
+  $rules = hiera('firewall::rules', {})
   if (!empty($rules))
   {
     notice(" Checking firewall rules: ${rules}")
