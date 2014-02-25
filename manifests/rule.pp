@@ -4,7 +4,7 @@ define firewall::rule(
   $display = undef,
 )
 {
-  if (!$::operatingsystem != 'Windows')
+  if (!$::operatingsystem != 'windows')
   {
     err("Firewall groups are not supported on ${::operatingsystem}")
     fail("Unsupported OS: ${::operatingsystem}")
