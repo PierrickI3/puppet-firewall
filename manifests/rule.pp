@@ -15,17 +15,17 @@ define firewall::rule(
   {
     present, enabled:
     {
-      exec {"Enable-Firewall-Rule-${rule}-${display}":
+      exec {"Enable-Firewall-Rule-${name}":
         command  => "Enable-NetFirewallRule ${display_option} -Name \"${rule}\"",
-        onlyif   => "if ((Get-NetFirewallRule ${display_option} -Name ${name} -ErrorAction Ignore).Enabled) { exit 1 }",
+        onlyif   => "if ((Get-NetFirewallRule ${display_option} -Name \"${rule}\" -ErrorAction Ignore).Enabled) { exit 1 }",
         provider => powershell,
       }
     }
     absent, disabled:
     {
-      exec {"Disable-Firewall-Rule-${rule}-${display}":
+      exec {"Disable-Firewall-Rule-${name}":
         command  => "Disable-NetFirewallRule ${display_option} -Name \"${rule}\"",
-        onlyif   => "if (!(Get-NetFirewallRule -name ${name} -ErrorAction Ignore).Enabled) { exit 1 }",
+        onlyif   => "if (!(Get-NetFirewallRule -name \"${rule}\" -ErrorAction Ignore).Enabled) { exit 1 }",
         provider => powershell,
       }
     }
