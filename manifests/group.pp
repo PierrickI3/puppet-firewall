@@ -15,7 +15,7 @@ define firewall::group(
   {
     present, enabled:
     {
-      exec {"Enable-Firewall-Group-${group}-${display}":
+      exec {"Enable-Firewall-Group-${name}":
         command  => "Enable-NetFirewallRule ${display_option} -Group \"${group}\"",
         onlyif   => "if (! $(Get-NetFirewallRule ${display_option} -Group \"${group}\" -Enabled False -ErrorAction Ignore)) { exit 1 }",
         provider => powershell,
@@ -23,7 +23,7 @@ define firewall::group(
     }
     absent, disabled:
     {
-      exec {"Disable-Firewall-Group-${group}-${display}":
+      exec {"Disable-Firewall-Group-${name}":
         command  => "Disable-NetFirewallRule ${display_option} -Group \"${group}\"",
         onlyif   => "if (! $(Get-NetFirewallRule ${display_option} -Group \"${group}\" -Enabled True -ErrorAction Ignore)) { exit 1 }",
         provider => powershell,

@@ -15,17 +15,17 @@ define firewall::profile(
   {
     present, enabled:
     {
-      exec {"Enable-Firewall-Profile-${profile}":
-        command  => "Set-NetFirewallProfile -Profile ${profile} -Enabled True",
-        onlyif   => "if ((Get-NetFirewallProfile -Profile ${profile}).Enabled) { exit 1 }",
+      exec {"Enable-Firewall-Profile-${name}":
+        command  => "Set-NetFirewallProfile -Profile \"${profile}\" -Enabled True",
+        onlyif   => "if ((Get-NetFirewallProfile -Profile \"${profile}\").Enabled) { exit 1 }",
         provider => powershell,
       }
     }
     absent, disabled:
     {
-      exec {"Disable-Firewall-Profile-${profile}":
-        command  => "Set-NetFirewallProfile -Profile ${profile} -Enabled False",
-        onlyif   => "if (!(Get-NetFirewallProfile -Profile ${profile}).Enabled) { exit 1 }",
+      exec {"Disable-Firewall-Profile-${name}":
+        command  => "Set-NetFirewallProfile -Profile \"${profile}\" -Enabled False",
+        onlyif   => "if (!(Get-NetFirewallProfile -Profile \"${profile}\").Enabled) { exit 1 }",
         provider => powershell,
       }
     }
