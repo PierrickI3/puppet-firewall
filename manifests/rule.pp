@@ -2,6 +2,7 @@ define firewall::rule(
   $ensure,
   $rule    = $name,
   $display = undef,
+  $profile = 'any',
 )
 {
   if ($::operatingsystem != 'windows')
@@ -21,8 +22,8 @@ define firewall::rule(
         present, enabled:
         {
           exec {"Enable-Firewall-Rule-${name}":
-            command  => "netsh advfirewall firewall set rule name=\"${rule}\"",
-            onlyif   => "if ((netsh advfirewall show rule name=\"${rule}\") | where {\$ -match '^Enabled\s+Yes'} ) { exit 1 }",
+            command  => "netsh advfirewall firewall set rule name=\"${rule}\" profile=\"${profile}\" enable=yes",
+            onlyif   => "if ((netsh advfirewall show rule name=\"${rule}\" profile=\"${profile}\") | where {\$ -match '^Enabled\s+Yes'} ) { exit 1 }",
             provider => powershell,
           }
         }
