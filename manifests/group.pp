@@ -21,7 +21,7 @@ define firewall::group(
         {
           exec {"Enable-Firewall-Group-${name}":
             command  => "netsh advfirewall set ${group_id}profile state on",
-            onlyif   => "if ((netsh advfirewall show ${group_id}profile state) | where {\$ -match '^State\s+ON'} ) { exit 1 }",
+            onlyif   => "if ((netsh advfirewall show ${group_id}profile state) | where {\$ -match '^State\s+OFF'} ) { exit 1 }",
             provider => powershell,
           }
         }
@@ -29,7 +29,7 @@ define firewall::group(
         {
           exec {"Disable-Firewall-Group-${name}":
             command  => "netsh advfirewall set ${group_id}profile state off",
-            onlyif   => "if ((netsh advfirewall show ${group_id}profile state) | where {\$ -match '^State\s+OFF'} ) { exit 1 }",
+            onlyif   => "if ((netsh advfirewall show ${group_id}profile state) | where {\$ -match '^State\s+ON'} ) { exit 1 }",
             provider => powershell,
           }
         }
