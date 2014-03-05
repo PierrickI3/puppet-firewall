@@ -10,25 +10,55 @@ define firewall::group(
     fail("Unsupported OS: ${::operatingsystem}")
   }
 
-  $display_option = empty($display) ? { true => '', default => "-DisplayGroup \"${display}\"" }
-  case $ensure
+  case $::operatingsystemrelease
   {
-    present, enabled:
+    '6.1.7601' : # Windows 7, 2008R2
     {
-      exec {"Enable-Firewall-Group-${name}":
-        command  => "Enable-NetFirewallRule ${display_option} -Group \"${group}\"",
-        onlyif   => "if (! $(Get-NetFirewallRule ${display_option} -Group \"${group}\" -Enabled False -ErrorAction Ignore)) { exit 1 }",
-        provider => powershell,
+      $group_id=downcase($group)
+      case $ensure
+      {
+        present, enabled:
+        {
+          exec {"Enable-Firewall-Group-${name}":
+            command  => "netsh advfirewall set ${group_id}profile state on",
+            onlyif   => "if ((netsh advfirewall show ${group_id}profile state) | where {\$ -match '^State\s+ON'} ) { exit 1 }",
+            provider => powershell,
+          }
+        }
+        absent, disabled:
+        {
+          exec {"Disable-Firewall-Group-${name}":
+            command  => "netsh advfirewall set ${group_id}profile state off",
+            onlyif   => "if ((netsh advfirewall show ${group_id}profile state) | where {\$ -match '^State\s+OFF'} ) { exit 1 }",
+            provider => powershell,
+          }
+        }
+        default: { fail("Unsupported ensure: ${ensure}") }
       }
     }
-    absent, disabled:
+    default:      # Windows 8, 8.1, 2012, 2012R2
     {
-      exec {"Disable-Firewall-Group-${name}":
-        command  => "Disable-NetFirewallRule ${display_option} -Group \"${group}\"",
-        onlyif   => "if (! $(Get-NetFirewallRule ${display_option} -Group \"${group}\" -Enabled True -ErrorAction Ignore)) { exit 1 }",
-        provider => powershell,
+      $display_option = empty($display) ? { true => '', default => "-DisplayGroup \"${display}\"" }
+      case $ensure
+      {
+        present, enabled:
+        {
+          exec {"Enable-Firewall-Group-${name}":
+            command  => "Enable-NetFirewallRule ${display_option} -Group \"${group}\"",
+            onlyif   => "if (! $(Get-NetFirewallRule ${display_option} -Group \"${group}\" -Enabled False -ErrorAction Ignore)) { exit 1 }",
+            provider => powershell,
+          }
+        }
+        absent, disabled:
+        {
+          exec {"Disable-Firewall-Group-${name}":
+            command  => "Disable-NetFirewallRule ${display_option} -Group \"${group}\"",
+            onlyif   => "if (! $(Get-NetFirewallRule ${display_option} -Group \"${group}\" -Enabled True -ErrorAction Ignore)) { exit 1 }",
+            provider => powershell,
+          }
+        }
+        default: { fail("Unsupported ensure: ${ensure}") }
       }
     }
-    default: { fail("Unsupported ensure: ${ensure}") }
   }
 }
