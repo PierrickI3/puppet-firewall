@@ -20,7 +20,7 @@ define firewall::profile(
         {
           exec {"Enable-Firewall-Profile-${name}":
             command  => "netsh advfirewall set ${profile_id}profile state on",
-            onlyif   => "if ((netsh advfirewall show ${profile_id}profile state) | where {\$ -match '^State\s+ON'} ) { exit 1 }",
+            onlyif   => "if ((netsh advfirewall show ${profile_id}profile state) | where {\$_ -match '^State\s+ON'} ) { exit 1 }",
             provider => powershell,
           }
         }
@@ -28,7 +28,7 @@ define firewall::profile(
         {
           exec {"Disable-Firewall-Profile-${name}":
             command  => "netsh advfirewall set ${profile_id}profile state off",
-            onlyif   => "if ((netsh advfirewall show ${profile_id}profile state) | where {\$ -match '^State\s+OFF'} ) { exit 1 }",
+            onlyif   => "if ((netsh advfirewall show ${profile_id}profile state) | where {\$_ -match '^State\s+OFF'} ) { exit 1 }",
             provider => powershell,
           }
         }
