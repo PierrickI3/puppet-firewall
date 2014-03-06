@@ -18,19 +18,21 @@ define firewall::rule(
     {
       case $ensure
       {
-        present, enabled:
+        present, enabled, on, yes:
         {
           exec {"Enable-Firewall-Rule-${name}":
             command  => "netsh advfirewall firewall set rule name=\"${rule}\" profile=\"${profile}\" new enable=yes",
-            onlyif   => "if ((netsh advfirewall show rule name=\"${rule}\" profile=\"${profile}\") | where {\$ -match '^Enabled\s+Yes'} ) { exit 1 }",
+            onlyif   => "if ((netsh advfirewall show rule name=\"${rule}\" profile=\"${profile}\") | where {\$_ -match '^Enabled\s+Yes'} ) { exit 1 }",
             provider => powershell,
           }
         }
-        absent, disabled:
+        absent, disabled, off, no:
         {
-          #TODO: Code this
-          err("Not coded yet")
-          fail("Not coded yet")
+          exec {"Disable-Firewall-Rule-${name}":
+            command  => "netsh advfirewall firewall set rule name=\"${rule}\" profile=\"${profile}\" new enable=no",
+            onlyif   => "if ((netsh advfirewall show rule name=\"${rule}\" profile=\"${profile}\") | where {\$_ -match '^Enabled\s+No'} ) { exit 1 }",
+            provider => powershell,
+          }
         }
         default: { fail("Unsupported ensure: ${ensure}") }
       }
@@ -40,7 +42,7 @@ define firewall::rule(
       $display_option = empty($display) ? { true => '', default => "-DisplayName \"${display}\"" }
       case $ensure
       {
-        present, enabled:
+        present, enabled, on, yes:
         {
           exec {"Enable-Firewall-Rule-${name}":
             command  => "Enable-NetFirewallRule ${display_option} -Name \"${rule}\"",
@@ -48,7 +50,7 @@ define firewall::rule(
             provider => powershell,
           }
         }
-        absent, disabled:
+        absent, disabled, off, no:
         {
           exec {"Disable-Firewall-Rule-${name}":
             command  => "Disable-NetFirewallRule ${display_option} -Name \"${rule}\"",
