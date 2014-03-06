@@ -14,22 +14,19 @@ define firewall::group(
   {
     '6.1.7601' : # Windows 7, 2008R2
     {
-      $group_id=downcase($group)
       case $ensure
       {
         present, enabled:
         {
           exec {"Enable-Firewall-Group-${name}":
-            command  => "netsh advfirewall set ${group_id}profile state on",
-            onlyif   => "if ((netsh advfirewall show ${group_id}profile state) | where {\$ -match '^State\s+ON'} ) { exit 1 }",
+            command  => "netsh advfirewall firewall set rule group=\"${group}\" new enable=yes",
             provider => powershell,
           }
         }
         absent, disabled:
         {
           exec {"Disable-Firewall-Group-${name}":
-            command  => "netsh advfirewall set ${group_id}profile state off",
-            onlyif   => "if ((netsh advfirewall show ${group_id}profile state) | where {\$ -match '^State\s+OFF'} ) { exit 1 }",
+            command  => "netsh advfirewall firewall set rule group=\"${group}\" new enable=no",
             provider => powershell,
           }
         }
