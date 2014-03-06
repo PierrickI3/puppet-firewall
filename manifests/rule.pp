@@ -16,13 +16,12 @@ define firewall::rule(
   {
     '6.1.7601' : # Windows 7, 2008R2
     {
-      $group_id=downcase($group)
       case $ensure
       {
         present, enabled:
         {
           exec {"Enable-Firewall-Rule-${name}":
-            command  => "netsh advfirewall firewall set rule name=\"${rule}\" profile=\"${profile}\" enable=yes",
+            command  => "netsh advfirewall firewall set rule name=\"${rule}\" profile=\"${profile}\" new enable=yes",
             onlyif   => "if ((netsh advfirewall show rule name=\"${rule}\" profile=\"${profile}\") | where {\$ -match '^Enabled\s+Yes'} ) { exit 1 }",
             provider => powershell,
           }
