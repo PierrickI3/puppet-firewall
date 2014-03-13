@@ -17,17 +17,28 @@ define firewall::group(
     {
       case $ensure
       {
+        # TODO: Add support for profile argument like [ 'domain', 'public' ]
+        case $profile
+        {
+          'domain':  { $profile_bit = '1' }
+          'private': { $profile_bit = '2' }
+          'public':  { $profile_bit = '4' }
+          default:   { $profile_bit = '0x7FFFFFFF' }
+        }
+
         present, enabled:
         {
           exec {"Enable-Firewall-Group-${name}":
-            command  => "netsh advfirewall firewall set rule group=\"${group}\" new enable=yes",
+            command  => "(New-Object -comObject HNetCfg.FwPolicy2).EnableRuleGroup(${profile_bit}, \"${group}\", \$true)",
+            onlyif   => "if ((New-Object -comObject HNetCfg.FwPolicy2).IsRuleGroupEnabled(${profile_bit}, \"${group}\")) { exit 1 }",
             provider => powershell,
           }
         }
         absent, disabled:
         {
           exec {"Disable-Firewall-Group-${name}":
-            command  => "netsh advfirewall firewall set rule group=\"${group}\" new enable=no",
+            command  => "(New-Object -comObject HNetCfg.FwPolicy2).EnableRuleGroup(${profile_bit}, \"${group}\", \$false)",
+            onlyif   => "if (!(New-Object -comObject HNetCfg.FwPolicy2).IsRuleGroupEnabled(${profile_bit}, \"${group}\")) { exit 1 }",
             provider => powershell,
           }
         }
