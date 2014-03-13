@@ -2,6 +2,7 @@ define firewall::group(
   $ensure,
   $group   = $name,
   $display = undef,
+  $profile = 'any',
 )
 {
   if ($::operatingsystem != 'windows')
