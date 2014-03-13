@@ -22,7 +22,7 @@ define firewall::rule(
         {
           exec {"Enable-Firewall-Rule-${name}":
             command  => "netsh advfirewall firewall set rule name=\"${rule}\" profile=\"${profile}\" new enable=yes",
-            onlyif   => "if ((netsh advfirewall firewall show rule name=\"${rule}\" profile=\"${profile}\") | where {\$_ -match '^Enabled\s+Yes'} ) { exit 1 }",
+            onlyif   => "if ((netsh advfirewall firewall show rule name=\"${rule}\" profile=\"${profile}\") | where {\$_ -match '^Enabled:\\s+Yes'} ) { exit 1 }",
             provider => powershell,
           }
         }
@@ -30,7 +30,7 @@ define firewall::rule(
         {
           exec {"Disable-Firewall-Rule-${name}":
             command  => "netsh advfirewall firewall set rule name=\"${rule}\" profile=\"${profile}\" new enable=no",
-            onlyif   => "if ((netsh advfirewall firewall show rule name=\"${rule}\" profile=\"${profile}\") | where {\$_ -match '^Enabled\s+No'} ) { exit 1 }",
+            onlyif   => "if ((netsh advfirewall firewall show rule name=\"${rule}\" profile=\"${profile}\") | where {\$_ -match '^Enabled:\\s+No'} ) { exit 1 }",
             provider => powershell,
           }
         }
