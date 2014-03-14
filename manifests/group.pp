@@ -15,17 +15,17 @@ define firewall::group(
   {
     '6.1.7601' : # Windows 7, 2008R2
     {
+      # TODO: Add support for profile argument like [ 'domain', 'public' ]
+      case $profile
+      {
+        'domain':  { $profile_bit = '1' }
+        'private': { $profile_bit = '2' }
+        'public':  { $profile_bit = '4' }
+        default:   { $profile_bit = '0x7FFFFFFF' }
+      }
+
       case $ensure
       {
-        # TODO: Add support for profile argument like [ 'domain', 'public' ]
-        case $profile
-        {
-          'domain':  { $profile_bit = '1' }
-          'private': { $profile_bit = '2' }
-          'public':  { $profile_bit = '4' }
-          default:   { $profile_bit = '0x7FFFFFFF' }
-        }
-
         present, enabled:
         {
           exec {"Enable-Firewall-Group-${name}":
