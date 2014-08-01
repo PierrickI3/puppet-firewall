@@ -8,6 +8,7 @@ define firewall::rule(
   $group          = undef,
   $direction      = undef,
   $profile        = 'any',
+  $protocol       = undef,
   $local_address  = undef,
   $local_port     = undef,
   $remote_address = undef,
