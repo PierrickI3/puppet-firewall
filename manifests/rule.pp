@@ -27,7 +27,7 @@ define firewall::rule(
   #TODO: Use profiles!
   case $::operatingsystemrelease
   {
-    '6.1.7601' : # Windows 7, 2008R2
+    '6.1.7601', '2008 R2' : # Windows 7, 2008R2
     {
       case $ensure
       {

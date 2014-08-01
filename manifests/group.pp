@@ -13,7 +13,7 @@ define firewall::group(
 
   case $::operatingsystemrelease
   {
-    '6.1.7601' : # Windows 7, 2008R2
+    '6.1.7601', '2008 R2' : # Windows 7, 2008R2
     {
       # TODO: Add support for profile argument like [ 'domain', 'public' ]
       case $profile
