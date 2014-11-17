@@ -3,6 +3,9 @@
 # Loads the basic software needed to run the firewall.
 #
 # === Parameters
+# [*hiera_loader*]
+#   If true, this module will query hiera and create profile, groupsl, and rules resources.
+#   Default: true
 #
 # === Variables
 #
@@ -18,41 +21,12 @@
 #
 # Copyright 2014 Gildas CHERRUEL
 #
-class firewall {
-
-  # Enable/Disable firewall profiles via hiera
-  $profiles = hiera_hash('firewall::profiles', {})
-  if (!empty($profiles))
+class firewall (
+  $hiera_loader = true
+)
+{
+  if ($hiera_loader)
   {
-    notice(" Checking firewall profiles: ${profiles}")
-    $profile_default = {
-      ensure => enabled,
-    }
-
-    create_resources(firewall::profile, $profiles, $profile_default)
-  }
-
-  # Enable/Disable firewall groups via hiera
-  $groups = hiera_hash('firewall::groups', {})
-  if (!empty($groups))
-  {
-    notice(" Checking firewall groups: ${groups}")
-    $group_default = {
-      ensure => enabled,
-    }
-
-    create_resources(firewall::group, $groups, $group_default)
-  }
-
-  # Enable/Disable firewall rules via hiera
-  $rules = hiera_hash('firewall::rules', {})
-  if (!empty($rules))
-  {
-    notice(" Checking firewall rules: ${rules}")
-    $rule_default = {
-      ensure => enabled,
-    }
-
-    create_resources(firewall::rule, $rules, $rule_default)
+    include firewall::hiera_loader
   }
 }
