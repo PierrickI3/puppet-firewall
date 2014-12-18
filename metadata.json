@@ -1,6 +1,6 @@
 {
   "name":         "gildas-firewall",
-  "version":      "0.1.0",
+  "version":      "0.1.1",
   "author":       "Gildas CHERRUEL",
   "summary":      "Unified Firewall management for Windows, Linux, Mac OS/X",
   "license":      "Apache License, Version 2.0",
@@ -8,14 +8,14 @@
   "project_page": "https://github.com/gildas/puppet-firewall",
   "issues_url":   "https://github.com/gildas/puppet-firewall/issues",
   "description":  "Multi-OS Firewall Management for PuppetLabs",
-  "operatingsystem_support: [
+  "operatingsystem_support": [
     {
       "operatingsystem":        "windows",
       "operatingsystemrelease": [ "2012 R2" ]
     }
   ],
   "dependencies": [
-    {"name": "puppetlabs/stdlib",     "version_requirement": ">= 1.0.0"},
-    {"name": "puppetlabs/powershell", "version_requirement": ">= 1.0.0"}
+    { "name": "puppetlabs/stdlib",     "version_requirement": ">= 1.0.0" },
+    { "name": "puppetlabs/powershell", "version_requirement": ">= 1.0.0" }
   ]
 }
